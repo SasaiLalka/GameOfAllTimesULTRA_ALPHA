@@ -1,0 +1,19 @@
+[2015-04-04] 1.0.6
+
+-New Features
+
+Added Z buffer to RLConsole
+
+
+
+[2015-02-21] 1.0.5.3
+- Bug Fixes
+RLConsole.Set(int x, int y, RLColor? color, RLColor? backColor, int? character) was not setting the background color
+
+[2015-02-15] 1.0.5.2
+- Bug Fixes 
+Access Violation on Delete Buffers if window was closed
+
+[2015-02-21] 1.0.5.3
+- Bug Fixes 
+RLConsole.Set(int x, int y, RLColor? color, RLColor? backColor, int? character) was not setting the background color
