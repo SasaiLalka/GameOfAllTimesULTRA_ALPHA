@@ -1,4 +1,4 @@
-﻿using RogueSharp;
+using RogueSharp;
 using RLNET;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,6 @@ namespace GameOfAllTimes.Core
         public List<Rectangle> Rooms;
         public DungeonMap()
         {
-            Game.SchedulingSystem.Clear();
             Rooms = new List<Rectangle>();
             _monsters = new List<Monster>();
             Doors = new List<Door>();
