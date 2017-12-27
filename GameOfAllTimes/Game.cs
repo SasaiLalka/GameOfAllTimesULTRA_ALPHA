@@ -1,4 +1,4 @@
-﻿using RLNET;
+using RLNET;
 using GameOfAllTimes.Core;
 using GameOfAllTimes.Systems;
 using System;
@@ -45,7 +45,9 @@ namespace GameOfAllTimes
         public static IRandom Random { get; private set; }
         public static MessageLog MessageLog { get; private set; }
         public static SchedulingSystem SchedulingSystem { get; private set; }
-        public static LinkedList<DungeonMap> Levels = new LinkedList<DungeonMap>();
+        public static LinkedList<SchedulingSystem> SchedulingSystems = new LinkedList<SchedulingSystem>();
+        public static LinkedListNode<SchedulingSystem> SchedSystem;
+        public static LinkedList<DungeonMap> Levels;
         public static LinkedListNode<DungeonMap> that;
         public static PerlinNoise noise;
 
@@ -57,7 +59,8 @@ namespace GameOfAllTimes
             int Seed = (int)DateTime.UtcNow.Ticks;
             Random = new DotNetRandom(Seed);
 
-            SchedulingSystem = new SchedulingSystem();
+            Levels = new LinkedList<DungeonMap>();
+
             MessageLog = new MessageLog();
             MessageLog.Add("The rogue arrives on level 1");
             MessageLog.Add($"Level created with seed '{Seed}'");
@@ -66,6 +69,10 @@ namespace GameOfAllTimes
             _messageConsole = new RLConsole(_messageWidth, _messageHeight);
             _statConsole = new RLConsole(_statWidth, _statHeight);
             _inventoryConsole = new RLConsole(_inventoryWidth, _inventoryHeight);
+
+            Player = new Player();
+            SchedulingSystem = new SchedulingSystem();
+            SchedSystem = SchedulingSystems.AddFirst(SchedulingSystem);
 
             CommandSystem = new CommandSystem();
             DungeonGenerator MapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 17, 5, _mapLevel);
@@ -104,14 +111,21 @@ namespace GameOfAllTimes
                         {
                             if (that.Next == null)
                             {
-                                SchedulingSystem.Clear();
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
+
+                                SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
+                                SchedSystem = SchedSystem.Next;
+                                SchedSystem = SchedulingSystems.AddLast(A_SchedulingSystem);
+                                SchedulingSystem = A_SchedulingSystem;
+
                                 DungeonGenerator mapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 15, 7, ++_mapLevel);
                                 DungeonMap = mapGenerator.CreateMap();
+
                                 MessageLog = new MessageLog();
                                 CommandSystem = new CommandSystem();
                                 _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {_mapLevel}";
                                 didPlayerAct = true;
+
                                 that = that.Next;
                                 that = Levels.AddLast(DungeonMap);
                             }
@@ -119,10 +133,17 @@ namespace GameOfAllTimes
                             {
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
                                 DungeonMap = that.Next.Value;
+
                                 Player.X = DungeonMap.Rooms[0].Center.X - 1;
                                 Player.Y = DungeonMap.Rooms[0].Center.Y;
+
+                                SchedulingSystem = SchedSystem.Next.Value;
+                                SchedSystem = SchedSystem.Next;
+
                                 MessageLog = new MessageLog();
                                 CommandSystem = new CommandSystem();
+
+
                                 _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {++_mapLevel}";
                                 didPlayerAct = true;
                                 that = that.Next;
@@ -134,6 +155,10 @@ namespace GameOfAllTimes
                             {
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
                                 DungeonMap = that.Previous.Value;
+
+                                SchedulingSystem = SchedSystem.Previous.Value;
+                                SchedSystem = SchedSystem.Previous;
+
                                 Player.X = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.X - 1;
                                 Player.Y = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.Y;
                                 MessageLog = new MessageLog();
