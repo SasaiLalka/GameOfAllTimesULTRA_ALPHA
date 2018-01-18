@@ -10,7 +10,7 @@ using RogueSharp;
 
 namespace GameOfAllTimes.Behaviours
 {
-    public class StandardMoveAndAttack : IBehaviour
+    class BigActorMoveAndAttack : IBehaviour
     {
         public bool Act(Monster monster, CommandSystem commandSystem)
         {
@@ -19,33 +19,48 @@ namespace GameOfAllTimes.Behaviours
             FieldOfView monsterFov = new FieldOfView(dungeonMap);
             if (!monster.TurnsAlerted.HasValue)
             {
-                monsterFov.ComputeFov(monster.X, monster.Y, monster.Awareness, true);
-                if (monsterFov.IsInFov(player.X, player.Y))
+                foreach(Cell cell in monster.AreaControlled.ToArray())
                 {
-                    Game.MessageLog.Add($"{monster.Name} is eager to fight {player.Name}");
-                    monster.TurnsAlerted = 1;
+                    monsterFov.ComputeFov(cell.X, cell.Y, monster.Awareness, true);
+                    if (monsterFov.IsInFov(player.X, player.Y))
+                    {
+                        Game.MessageLog.Add($"{monster.Name} is eager to fight {player.Name}");
+                        monster.TurnsAlerted = 1;
+                        break;
+                    }
                 }
             }
             if (monster.TurnsAlerted.HasValue)
             {
-                dungeonMap.SetIsWalkable(monster.X, monster.Y, true);
+                foreach (Cell cell in monster.AreaControlled)
+                {
+                    dungeonMap.SetIsWalkable(cell.X, cell.Y, true);
+                }
                 dungeonMap.SetIsWalkable(player.X, player.Y, true);
                 PathFinder pathFinder = new PathFinder(dungeonMap);
                 Path path = null;
-                try
+                Path shortestPath = null;
+                foreach (Cell cell in monster.AreaControlled)
                 {
-                    path = pathFinder.ShortestPath(dungeonMap.GetCell(monster.X, monster.Y), dungeonMap.GetCell(player.X, player.Y));
-                }
-                catch
-                {
-                    if (dungeonMap.IsInFov(monster.X, monster.Y))
+                    try
                     {
-                        Game.MessageLog.Add($"{monster.Name} waits for a turn");
+                        path = pathFinder.ShortestPath(dungeonMap.GetCell(cell.X, cell.Y), dungeonMap.GetCell(player.X, player.Y));
+                        if (shortestPath == null || path.Length < shortestPath.Length)
+                        {
+                            shortestPath = path;
+                        }
+                    }
+                    catch
+                    {
+
                     }
                 }
-                dungeonMap.SetIsWalkable(monster.X, monster.Y, false);
+                foreach (Cell cell in monster.AreaControlled)
+                {
+                    dungeonMap.SetIsWalkable(cell.X, cell.Y, false);
+                }
                 dungeonMap.SetIsWalkable(player.X, player.Y, false);
-                if (path != null)
+                if (shortestPath != null)
                 {
                     try
                     {

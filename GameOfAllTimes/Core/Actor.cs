@@ -1,11 +1,13 @@
 ﻿using GameOfAllTimes.Interfaces;
 using RLNET;
 using RogueSharp;
+using System.Collections.Generic;
 
 namespace GameOfAllTimes.Core
 {
     public class Actor : IActor, IDrawable, IScheduleable
     {
+        private List<Cell> _areaControlled;
         private int _attack;
         private int _attackChance;
         private int _awareness;
@@ -14,6 +16,7 @@ namespace GameOfAllTimes.Core
         private int _gold;
         private int _health;
         private int _maxHealth;
+        private int _size;
         private string _name;
         private int _speed;
         public int Attack
@@ -137,6 +140,30 @@ namespace GameOfAllTimes.Core
                 return Speed;
             }
         }
+        
+        public int Size
+        {
+            get
+            {
+                return _size;
+            }
+            set
+            {
+                _size = value;
+            }
+        }
+
+        public List<Cell> AreaControlled
+        {
+            get
+            {
+                return _areaControlled;
+            }
+            set
+            {
+                _areaControlled = value;
+            }
+        }
 
         public RLColor Color { get; set; }
         public char Symbol { get; set; }
@@ -145,14 +172,36 @@ namespace GameOfAllTimes.Core
 
         public void Draw(RLConsole console, IMap map)
         {
-            if (!map.GetCell(X, Y).IsExplored)
+            if (Size == 1)
             {
-                return;
+                if (!map.GetCell(X, Y).IsExplored)
+                {
+                    return;
+                }
+                if (map.IsInFov(X, Y))
+                {
+                    console.Set(X, Y, Color, Colors.FloorBackgroundFov, Symbol);
+                }
+                else
+                {
+                    console.Set(X, Y, Colors.Floor, Colors.FloorBackground, '.');
+                }
             }
-            if (map.IsInFov(X, Y))
-                console.Set(X, Y, Color, Colors.FloorBackgroundFov, Symbol);
             else
-                console.Set(X, Y, Colors.Floor, Colors.FloorBackground, '.');
+            {
+                foreach (Cell cell in AreaControlled)
+                {
+                    if (!cell.IsExplored)
+                    {
+                        return;
+                    }
+                    if (map.IsInFov(cell.X, cell.Y))
+                    {
+                        console.Set(X, Y, Size, Size, Color, Colors.FloorBackgroundFov, Symbol);
+                    }
+                }
+
+            }
         }
     }
 }

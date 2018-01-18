@@ -32,16 +32,38 @@ namespace GameOfAllTimes.Core
             int i = 0;
             foreach(Monster monster in _monsters)
             {
-                if (IsInFov(monster.X, monster.Y))
+                if (monster.Size == 1)
                 {
-                    monster.Draw(mapConsole, this);
-                    monster.DrawStats(statConsole, i);
-                    i++;
+                    if (IsInFov(monster.X, monster.Y))
+                    {
+                        monster.Draw(mapConsole, this);
+                        monster.DrawStats(statConsole, i);
+                        i++;
+                    }
+                    else
+                    {
+                        if (GetCell(monster.X, monster.Y).IsExplored)
+                        {
+                            mapConsole.Set(monster.X, monster.Y, Colors.Floor, Colors.FloorBackground, '.');
+                        }
+                    }
                 }
                 else
                 {
-                    if (GetCell(monster.X, monster.Y).IsExplored)
-                        mapConsole.Set(monster.X, monster.Y, Colors.Floor, Colors.FloorBackground, '.');
+                    if (monster.AreaControlled.Any(cell => cell.IsInFov))
+                    {
+                        monster.Draw(mapConsole, this);
+                        monster.DrawStats(statConsole, i);
+                        i++;
+                    }
+                    else
+                    {
+                        if (monster.AreaControlled.All(cell => !cell.IsInFov && cell.IsExplored))
+                        {
+                            mapConsole.Set(monster.X, monster.Y, 3, 3, Colors.Floor, Colors.FloorBackground, '.');
+                        }
+                    }
+                    
                 }
             }
             foreach (Door door in Doors)
@@ -104,7 +126,19 @@ namespace GameOfAllTimes.Core
         public void AddMonster(Monster monster)
         {
             _monsters.Add(monster);
-            SetIsWalkable(monster.X, monster.Y, false);
+            if (monster.Size == 1)
+            {
+                SetIsWalkable(monster.X, monster.Y, false);
+                monster.AreaControlled.Add(GetCell(monster.X, monster.Y));
+            }
+            else
+            {
+                foreach (Cell cell in GetCellsInArea(monster.X + 1, monster.Y + 1, 1))
+                {
+                    SetIsWalkable(cell.X, cell.Y, false);
+                    monster.AreaControlled.Add(GetCell(cell.X, cell.Y));
+                }
+            }
             Game.SchedulingSystem.Add(monster);
         }
 
@@ -147,18 +181,22 @@ namespace GameOfAllTimes.Core
             foreach (Cell cell in GetAllCells())
             {
                 if (IsInFov(cell.X, cell.Y))
+                {
                     SetCellProperties(cell.X, cell.Y, cell.IsTransparent, cell.IsWalkable, true);
+                }
             }
         }
 
         public bool SetActorPosition(Actor actor, int x, int y)
-        {
+    { 
             if (GetCell(x, y).IsWalkable)
             {
                 SetIsWalkable(actor.X, actor.Y, true);
+                actor.AreaControlled.Remove(GetCell(actor.X, actor.Y));
                 actor.X = x;
                 actor.Y = y;
                 SetIsWalkable(actor.X, actor.Y, false);
+                actor.AreaControlled.Add(GetCell(actor.X, actor.Y));
                 OpenDoor(actor, x, y);
                 if (actor is Player)
                     UpdatePlayerFieldOfView();
@@ -184,13 +222,24 @@ namespace GameOfAllTimes.Core
         public void RemoveMonster(Monster monster)
         {
             _monsters.Remove(monster);
-            SetIsWalkable(monster.X, monster.Y, true);
+            if (monster.Size == 1)
+            {
+                SetIsWalkable(monster.X, monster.Y, true);
+            }
+            else
+            {
+                foreach (Cell cell in monster.AreaControlled)
+                {
+                    SetIsWalkable(cell.X, cell.Y, true);
+                }
+            }
             Game.SchedulingSystem.Remove(monster);
         }
 
         public Monster GetMonsterAt(int x, int y)
         {
-            return _monsters.FirstOrDefault(m => m.X == x && m.Y == y);
+            return _monsters.FirstOrDefault(m => m.AreaControlled.Contains(GetCell(x,y)));
         }
+        
     }
 }

@@ -1,4 +1,6 @@
 ﻿using GameOfAllTimes.Core;
+using System.Collections.Generic;
+using System.Linq;
 using RLNET;
 using RogueSharp;
 using System.Text;
@@ -166,11 +168,26 @@ namespace GameOfAllTimes.Systems
 
         public void MoveMonster(Monster monster, Cell cell)
         {
-            if (!Game.DungeonMap.SetActorPosition(monster, cell.X, cell.Y))
+            if (monster.Size == 1)
             {
-                if (Game.Player.X == cell.X && Game.Player.Y == cell.Y)
+                if (!Game.DungeonMap.SetActorPosition(monster, cell.X, cell.Y))
                 {
-                    Attack(monster, Game.Player);
+                    if (Game.Player.X == cell.X && Game.Player.Y == cell.Y)
+                    {
+                        Attack(monster, Game.Player);
+                    }
+                }
+            }
+            else
+            {
+                List<Cell> ExpectedArea = Game.DungeonMap.GetCellsInArea(cell.X + 1, cell.Y + 1, 1).ToList();
+                List<Cell> Sub = ExpectedArea.Except(monster.AreaControlled).ToList();
+                if (Sub.Any(tile => !Game.DungeonMap.SetActorPosition(monster, tile.X, tile.Y)))
+                {
+                    if (Sub.Any(tile => Game.Player.X == tile.X && Game.Player.Y == tile.Y))
+                    {
+                        Attack(monster, Game.Player);
+                    }
                 }
             }
         }

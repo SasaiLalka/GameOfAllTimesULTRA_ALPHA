@@ -28,9 +28,12 @@ namespace GameOfAllTimes.Systems
             _minRoomSize = minRoomSize;
             _map = new DungeonMap();
         }
+
+        // Creating default level
         public DungeonMap CreateMap()
         {
             _map.Initialize(_width, _height);
+            // Creating rooms
             for (int r = _maxRooms; r > 0; r--)
             {
                 int roomWidth = Game.Random.Next(_minRoomSize, _maxRoomSize);
@@ -38,11 +41,13 @@ namespace GameOfAllTimes.Systems
                 int xPosition = Game.Random.Next(0, _width - roomWidth - 1);
                 int yPosition = Game.Random.Next(0, _height - roomHeight - 1);
                 var newRoom = new Rectangle(xPosition, yPosition, roomWidth, roomHeight);
+                // If created room isn't intersected by any other room which already exists, add it to the list
                 if (!_map.Rooms.Any(room => newRoom.Intersects(room)))
                 {
                     _map.Rooms.Add(newRoom);
                 }
             }
+            // Creating tunnels between rooms
             for (int r = 1; r < _map.Rooms.Count; r++)
             {
                 int previousRoomCenterX = _map.Rooms[r - 1].Center.X;
@@ -70,6 +75,39 @@ namespace GameOfAllTimes.Systems
             PlaceMonsters();
             return _map;
         }
+
+        // Creating the final level of the game
+        // Killing the final boss will end the game
+        // So there is no need to create stairs down
+        public DungeonMap CreateFinalLevel()
+        {
+            _map.Initialize(_width, _height);
+            Rectangle playerSpawn = new Rectangle(10, _height / 2 - 5, 8, 8);
+            Rectangle bossSpawn = new Rectangle(_width / 2, 0, _width / 2 - 1, _height - 2);
+
+            CreateRoom(bossSpawn);
+            CreateRoom(playerSpawn);
+
+            _map.Rooms.Add(playerSpawn);
+            _map.Rooms.Add(bossSpawn);
+
+            CreateHorizontalTunnel(playerSpawn.Center.X, bossSpawn.Center.X, playerSpawn.Center.Y);
+
+            PlacePlayer();
+
+            var monster = Dragon.Create(1);
+            monster.X = bossSpawn.Center.X;
+            monster.Y = bossSpawn.Center.Y;
+
+            _map.AddMonster(monster);
+
+            CreateStairs();
+            // Setting the second stairs at 0,0 to avoid exception
+            _map.StairsDown.X = _map.StairsDown.Y = 0;
+            return _map;
+        }
+
+        // Creating room on the level
         private void CreateRoom(Rectangle room)
         {
             for (int x = room.Left + 1; x < room.Right; x++)
@@ -80,11 +118,13 @@ namespace GameOfAllTimes.Systems
                 }
             }
         }
+
+        // Placing monsters on the level
         private void PlaceMonsters()
         {
             foreach(var room in _map.Rooms)
             {
-                if (Dice.Roll("1D10") < 7)
+                if (Dice.Roll("1D10") < 8)
                 {
                     var numberOfMonsters = Dice.Roll("1D4");
                     for (int i = 0; i < numberOfMonsters; i++)
@@ -101,6 +141,8 @@ namespace GameOfAllTimes.Systems
                 }
             }
         }
+
+        // Placing player on the level
         private void PlacePlayer()
         {
             Player player = Game.Player;
@@ -112,6 +154,8 @@ namespace GameOfAllTimes.Systems
             player.Y = _map.Rooms[0].Center.Y;
             _map.AddPlayer(player);
         }
+
+        // Creating a horizontal path from one room to another
         private void CreateHorizontalTunnel(int xStart, int xEnd, int yPosition)
         {
             for (int x = Math.Min(xStart, xEnd); x <= Math.Max(xStart, xEnd); x++)
@@ -119,6 +163,8 @@ namespace GameOfAllTimes.Systems
                 _map.SetCellProperties(x, yPosition, true, true);
             }
         }
+
+        // Creating a vertical path from one room to another
         private void CreateVerticalTunnel(int yStart, int yEnd, int xPosition)
         {
             for (int y = Math.Min(yStart, yEnd); y <= Math.Max(yStart, yEnd); y++)
@@ -126,6 +172,7 @@ namespace GameOfAllTimes.Systems
                 _map.SetCellProperties(xPosition, y, true, true);
             }
         }
+
         private void CreateDoors(Rectangle room)
         {
             int xMin = room.Left;
@@ -153,6 +200,7 @@ namespace GameOfAllTimes.Systems
                 }
             }
         }
+
         private bool IsPotentialDoor(Cell cell)
         {
             // If the cell is not walkable
@@ -191,6 +239,7 @@ namespace GameOfAllTimes.Systems
             }
             return false;
         }
+
         private void CreateStairs()
         {
             _map.StairsUp = new Stairs

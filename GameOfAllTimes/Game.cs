@@ -45,10 +45,13 @@ namespace GameOfAllTimes
         public static IRandom Random { get; private set; }
         public static MessageLog MessageLog { get; private set; }
         public static SchedulingSystem SchedulingSystem { get; private set; }
-        public static LinkedList<SchedulingSystem> SchedulingSystems = new LinkedList<SchedulingSystem>();
+
+        public static LinkedList<SchedulingSystem> SchedulingSystems;
         public static LinkedListNode<SchedulingSystem> SchedSystem;
+
         public static LinkedList<DungeonMap> Levels;
         public static LinkedListNode<DungeonMap> that;
+
         public static PerlinNoise noise;
 
 
@@ -60,6 +63,7 @@ namespace GameOfAllTimes
             Random = new DotNetRandom(Seed);
 
             Levels = new LinkedList<DungeonMap>();
+            SchedulingSystems = new LinkedList<SchedulingSystem>();
 
             MessageLog = new MessageLog();
             MessageLog.Add("The rogue arrives on level 1");
@@ -74,6 +78,7 @@ namespace GameOfAllTimes
             SchedulingSystem = new SchedulingSystem();
             SchedSystem = SchedulingSystems.AddFirst(SchedulingSystem);
 
+            // Creating the first level of dungeon
             CommandSystem = new CommandSystem();
             DungeonGenerator MapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 17, 5, _mapLevel);
             DungeonMap = MapGenerator.CreateMap();
@@ -86,7 +91,6 @@ namespace GameOfAllTimes
         }
         private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
         {
-
             _inventoryConsole.SetBackColor(0, 0, _inventoryWidth, _inventoryHeight, Swatch.DbWood);
             _inventoryConsole.Print(1, 1, "Inventory", Colors.TextHeading);
             bool didPlayerAct = false;
@@ -112,20 +116,38 @@ namespace GameOfAllTimes
                             if (that.Next == null)
                             {
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
+                                if (_mapLevel == 1)
+                                {
+                                    SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
+                                    SchedSystem = SchedSystem.Next;
+                                    SchedSystem = SchedulingSystems.AddLast(A_SchedulingSystem);
+                                    SchedulingSystem = A_SchedulingSystem;
 
-                                SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
-                                SchedSystem = SchedSystem.Next;
-                                SchedSystem = SchedulingSystems.AddLast(A_SchedulingSystem);
-                                SchedulingSystem = A_SchedulingSystem;
+                                    DungeonGenerator mapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 15, 7, ++_mapLevel);
+                                    DungeonMap = mapGenerator.CreateFinalLevel();
 
-                                DungeonGenerator mapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 15, 7, ++_mapLevel);
-                                DungeonMap = mapGenerator.CreateMap();
+                                    MessageLog = new MessageLog();
+                                    CommandSystem = new CommandSystem();
+                                    _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {_mapLevel}";
+                                    didPlayerAct = true;
+                                }
+                                else
+                                {
 
-                                MessageLog = new MessageLog();
-                                CommandSystem = new CommandSystem();
-                                _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {_mapLevel}";
-                                didPlayerAct = true;
+                                    SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
+                                    SchedSystem = SchedSystem.Next;
+                                    SchedSystem = SchedulingSystems.AddLast(A_SchedulingSystem);
+                                    SchedulingSystem = A_SchedulingSystem;
 
+                                    DungeonGenerator mapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 15, 7, ++_mapLevel);
+                                    DungeonMap = mapGenerator.CreateMap();
+
+                                    MessageLog = new MessageLog();
+                                    CommandSystem = new CommandSystem();
+                                    _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {_mapLevel}";
+                                    didPlayerAct = true;
+
+                                }
                                 that = that.Next;
                                 that = Levels.AddLast(DungeonMap);
                             }
@@ -161,6 +183,7 @@ namespace GameOfAllTimes
 
                                 Player.X = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.X - 1;
                                 Player.Y = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.Y;
+
                                 MessageLog = new MessageLog();
                                 CommandSystem = new CommandSystem();
                                 _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {--_mapLevel}";

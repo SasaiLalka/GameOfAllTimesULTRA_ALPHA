@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RogueSharp;
 
 namespace GameOfAllTimes.Interfaces
 {
     public interface IActor
     {
+        List<Cell> AreaControlled { get; set; }
         int Attack { get; set; }
         int AttackChance { get; set; }
         int Awareness { get; set; }
@@ -18,5 +20,6 @@ namespace GameOfAllTimes.Interfaces
         int MaxHealth { get; set; }
         string Name { get; set; }
         int Speed { get; set; }
+        int Size { get; set; }
     }
 }

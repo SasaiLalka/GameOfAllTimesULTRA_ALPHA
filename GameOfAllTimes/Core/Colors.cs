@@ -18,6 +18,7 @@ namespace GameOfAllTimes.Core
         public static RLColor Player = Swatch.DbLight;
 
         public static RLColor KoboldColor = Swatch.DbBrightWood;
+        public static RLColor DragonColor = Swatch.DbBlood;
         public static RLColor Text = Swatch.DbLight;
         public static RLColor Gold = Swatch.DbSun;
 

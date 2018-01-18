@@ -1,10 +1,13 @@
 ﻿using RLNET;
+using RogueSharp;
+using System.Collections.Generic;
 namespace GameOfAllTimes.Core
 {
     public class Player : Actor
     {
         public Player()
         {
+            AreaControlled = new List<Cell>();
             Attack = 2;
             AttackChance = 50;
             Awareness = 15;
@@ -17,6 +20,7 @@ namespace GameOfAllTimes.Core
             Name = "Rogue";
             Speed = 10;
             Symbol = '@';
+            Size = 1;
         }
         public void DrawStats(RLConsole statConsole)
         {

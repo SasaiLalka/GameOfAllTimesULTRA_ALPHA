@@ -16,6 +16,7 @@ namespace GameOfAllTimes.Monsters
             int health = Dice.Roll("2D5");
             return new Kobold
             {
+                AreaControlled = new List<Cell>(),
                 Attack = Dice.Roll("1D3") + level / 3,
                 AttackChance = Dice.Roll("25D3"),
                 Awareness = 10,
@@ -27,7 +28,8 @@ namespace GameOfAllTimes.Monsters
                 MaxHealth = health,
                 Name = "Kobold",
                 Speed = 14,
-                Symbol = 'k'
+                Symbol = 'k',
+                Size = 1
             };
         }
     }
