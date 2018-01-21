@@ -64,3 +64,16 @@ D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.cs
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.csproj.CoreCompileInputs.cache
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.exe
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.pdb
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\terminal8x8.png
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\GameOfAllTimes.exe.config
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\GameOfAllTimes.exe
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\GameOfAllTimes.pdb
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\OpenTK.dll
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RLNET.dll
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RogueSharp.dll
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\OpenTK.xml
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RogueSharp.xml
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.csprojResolveAssemblyReference.cache
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.exe
+C:\Users\User\Desktop\Big Shit\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.pdb

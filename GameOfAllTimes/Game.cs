@@ -5,32 +5,34 @@ using System;
 using RogueSharp.Random;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace GameOfAllTimes
 {
     class Game
     {
-        // Main Console
+
+        //Main Console
         private static readonly int _screenWidth = 100;
         private static readonly int _screenHeight = 70;
-        private static RLRootConsole _rootConsole;
+        public static RLRootConsole _rootConsole;
 
-        // Map console
+        //Map console
         private static readonly int _mapWidth = 80;
         private static readonly int _mapHeight = 48;
         private static RLConsole _mapConsole;
 
-        // Message console
+        //Message console
         private static readonly int _messageWidth = 80;
         private static readonly int _messageHeight = 11;
         private static RLConsole _messageConsole;
 
-        // Stats console
+        //Stats console
         private static readonly int _statWidth = 20;
         private static readonly int _statHeight = 70;
         private static RLConsole _statConsole;
 
-        // Inventory console
+        //Inventory console
         private static readonly int _inventoryWidth = 80;
         private static readonly int _inventoryHeight = 11;
         private static RLConsole _inventoryConsole;
@@ -45,49 +47,15 @@ namespace GameOfAllTimes
         public static IRandom Random { get; private set; }
         public static MessageLog MessageLog { get; private set; }
         public static SchedulingSystem SchedulingSystem { get; private set; }
-
-        public static LinkedList<SchedulingSystem> SchedulingSystems;
+        public static LinkedList<SchedulingSystem> SchedulingSystems = new LinkedList<SchedulingSystem>();
         public static LinkedListNode<SchedulingSystem> SchedSystem;
-
         public static LinkedList<DungeonMap> Levels;
         public static LinkedListNode<DungeonMap> that;
 
-        public static PerlinNoise noise;
-
 
         static void Main()
-        {   
-            string FontFileName = "terminal8x8.png";
-            string ConsoleTitile = "Tutorial";
-            int Seed = (int)DateTime.UtcNow.Ticks;
-            Random = new DotNetRandom(Seed);
-
-            Levels = new LinkedList<DungeonMap>();
-            SchedulingSystems = new LinkedList<SchedulingSystem>();
-
-            MessageLog = new MessageLog();
-            MessageLog.Add("The rogue arrives on level 1");
-            MessageLog.Add($"Level created with seed '{Seed}'");
-            _rootConsole = new RLRootConsole(FontFileName, _screenWidth, _screenHeight, 8, 8, 1f, ConsoleTitile);
-            _mapConsole = new RLConsole(_mapWidth, _mapHeight);
-            _messageConsole = new RLConsole(_messageWidth, _messageHeight);
-            _statConsole = new RLConsole(_statWidth, _statHeight);
-            _inventoryConsole = new RLConsole(_inventoryWidth, _inventoryHeight);
-
-            Player = new Player();
-            SchedulingSystem = new SchedulingSystem();
-            SchedSystem = SchedulingSystems.AddFirst(SchedulingSystem);
-
-            // Creating the first level of dungeon
-            CommandSystem = new CommandSystem();
-            DungeonGenerator MapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 17, 5, _mapLevel);
-            DungeonMap = MapGenerator.CreateMap();
-            DungeonMap.UpdatePlayerFieldOfView();
-            that = Levels.AddFirst(DungeonMap);
-
-            _rootConsole.Update += OnRootConsoleUpdate;
-            _rootConsole.Render += OnRootConsoleRender;
-            _rootConsole.Run();
+        {
+            Menu.PrintMenu();
         }
         private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
         {
@@ -108,7 +76,9 @@ namespace GameOfAllTimes
                     else if (keyPress.Key == RLKey.Right)
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Right);
                     else if (keyPress.Key == RLKey.Escape)
-                        _rootConsole.Close();
+                    {
+                        Menu.Pause();
+                    }
                     else if (keyPress.Key == RLKey.Period)
                     {
                         if (DungeonMap.CanMoveDownToNextLevel())
@@ -230,5 +200,45 @@ namespace GameOfAllTimes
             }
             _renderRequired = false;
         }
+
+        public static void NewGameStart()
+        {
+            string FontFileName = "terminal8x8.png";
+            string ConsoleTitile = "Tutorial";
+            int Seed = (int)DateTime.UtcNow.Ticks;
+            Random = new DotNetRandom(Seed);
+
+            Levels = new LinkedList<DungeonMap>();
+
+            MessageLog = new MessageLog();
+            MessageLog.Add("The rogue arrives on level 1");
+            MessageLog.Add($"Level created with seed '{Seed}'");
+            _rootConsole = new RLRootConsole(FontFileName, _screenWidth, _screenHeight, 8, 8, 1f, ConsoleTitile);
+            _mapConsole = new RLConsole(_mapWidth, _mapHeight);
+            _messageConsole = new RLConsole(_messageWidth, _messageHeight);
+            _statConsole = new RLConsole(_statWidth, _statHeight);
+            _inventoryConsole = new RLConsole(_inventoryWidth, _inventoryHeight);
+
+            Player = new Player();
+            SchedulingSystem = new SchedulingSystem();
+            SchedSystem = SchedulingSystems.AddFirst(SchedulingSystem);
+
+            CommandSystem = new CommandSystem();
+            DungeonGenerator MapGenerator = new DungeonGenerator(_mapWidth, _mapHeight, 20, 17, 5, _mapLevel);
+            DungeonMap = MapGenerator.CreateMap();
+            DungeonMap.UpdatePlayerFieldOfView();
+            that = Levels.AddFirst(DungeonMap);
+
+            _rootConsole.Update += OnRootConsoleUpdate;
+            _rootConsole.Render += OnRootConsoleRender;
+            _rootConsole.Run();
+        }
+
+        // Установки для меню
+        void BeforeMenuSetup()
+        {
+
+        }
+
     }
 }
