@@ -19,7 +19,7 @@ namespace GameOfAllTimes.Behaviours
             FieldOfView monsterFov = new FieldOfView(dungeonMap);
             if (!monster.TurnsAlerted.HasValue)
             {
-                foreach(Cell cell in monster.AreaControlled.ToArray())
+                foreach (Cell cell in monster.AreaControlled.ToArray())
                 {
                     monsterFov.ComputeFov(cell.X, cell.Y, monster.Awareness, true);
                     if (monsterFov.IsInFov(player.X, player.Y))
@@ -39,20 +39,16 @@ namespace GameOfAllTimes.Behaviours
                 dungeonMap.SetIsWalkable(player.X, player.Y, true);
                 PathFinder pathFinder = new PathFinder(dungeonMap);
                 Path path = null;
-                Path shortestPath = null;
-                foreach (Cell cell in monster.AreaControlled)
+                // Calculating the path from the central part of the monster
+                try
                 {
-                    try
+                    path = pathFinder.ShortestPath(monster.AreaControlled[4], dungeonMap.GetCell(player.X, player.Y));
+                }
+                catch
+                {
+                    if (monster.AreaControlled.Any(c => c.IsInFov))
                     {
-                        path = pathFinder.ShortestPath(dungeonMap.GetCell(cell.X, cell.Y), dungeonMap.GetCell(player.X, player.Y));
-                        if (shortestPath == null || path.Length < shortestPath.Length)
-                        {
-                            shortestPath = path;
-                        }
-                    }
-                    catch
-                    {
-
+                        Game.MessageLog.Add($"{monster.Name} waits for a turn");
                     }
                 }
                 foreach (Cell cell in monster.AreaControlled)
@@ -60,7 +56,7 @@ namespace GameOfAllTimes.Behaviours
                     dungeonMap.SetIsWalkable(cell.X, cell.Y, false);
                 }
                 dungeonMap.SetIsWalkable(player.X, player.Y, false);
-                if (shortestPath != null)
+                if (path != null)
                 {
                     try
                     {
@@ -71,7 +67,7 @@ namespace GameOfAllTimes.Behaviours
                         Game.MessageLog.Add($"{monster.Name} growls in frustration");
                     }
                     monster.TurnsAlerted++;
-                    if (monster.TurnsAlerted > 15)
+                    if (monster.TurnsAlerted > 90)
                     {
                         monster.TurnsAlerted = null;
                     }

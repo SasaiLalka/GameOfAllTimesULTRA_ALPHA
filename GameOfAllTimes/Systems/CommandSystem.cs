@@ -170,8 +170,10 @@ namespace GameOfAllTimes.Systems
         {
             if (monster.Size == 1)
             {
+                // If something crossed the monster's path
                 if (!Game.DungeonMap.SetActorPosition(monster, cell.X, cell.Y))
                 {
+                    // If it is player
                     if (Game.Player.X == cell.X && Game.Player.Y == cell.Y)
                     {
                         Attack(monster, Game.Player);
@@ -180,14 +182,36 @@ namespace GameOfAllTimes.Systems
             }
             else
             {
-                List<Cell> ExpectedArea = Game.DungeonMap.GetCellsInArea(cell.X + 1, cell.Y + 1, 1).ToList();
-                List<Cell> Sub = ExpectedArea.Except(monster.AreaControlled).ToList();
-                if (Sub.Any(tile => !Game.DungeonMap.SetActorPosition(monster, tile.X, tile.Y)))
+                // Clearing controlled area for calculating next path
+                foreach (Cell tile in monster.AreaControlled)
                 {
-                    if (Sub.Any(tile => Game.Player.X == tile.X && Game.Player.Y == tile.Y))
+                    Game.DungeonMap.SetIsWalkable(tile.X, tile.Y, true);
+                }
+                // Defining the area, which must be controlled by monster
+                List<Cell> DesiredArea = Game.DungeonMap.GetCellsInArea(cell.X, cell.Y, 1).ToList();
+                // If there are no obstacles
+                if (DesiredArea.All(c => c.IsWalkable))
+                {
+                    monster.X = DesiredArea[0].X;
+                    monster.Y = DesiredArea[0].Y;
+                    foreach (Cell tile in monster.AreaControlled.ToArray())
                     {
-                        Attack(monster, Game.Player);
+                        monster.AreaControlled.RemoveAll(c => c.X == tile.X && c.Y == tile.Y);
                     }
+                    foreach (Cell tile in DesiredArea)
+                    {
+                        monster.AreaControlled.Add(tile);
+                    }
+                }
+                // If player is next to the monster
+                else if (DesiredArea.Any(c => Game.Player.X == c.X && Game.Player.Y == c.Y))
+                {
+                    Attack(monster, Game.Player);
+                }
+                // Setting cells controlled by monster not walkable
+                foreach (Cell tile in monster.AreaControlled)
+                {
+                    Game.DungeonMap.SetIsWalkable(tile.X, tile.Y, false);
                 }
             }
         }

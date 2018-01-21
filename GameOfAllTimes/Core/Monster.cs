@@ -21,7 +21,7 @@ namespace GameOfAllTimes.Core
             }
             else
             {
-                var behaviour = new StandardMoveAndAttack();
+                var behaviour = new BigActorMoveAndAttack();
                 behaviour.Act(this, commandSystem);
             }
         }

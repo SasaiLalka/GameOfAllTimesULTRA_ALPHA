@@ -10,27 +10,27 @@ namespace GameOfAllTimes
 {
     class Game
     {
-        //Main Console
+        // Main Console
         private static readonly int _screenWidth = 100;
         private static readonly int _screenHeight = 70;
         private static RLRootConsole _rootConsole;
 
-        //Map console
+        // Map console
         private static readonly int _mapWidth = 80;
         private static readonly int _mapHeight = 48;
         private static RLConsole _mapConsole;
 
-        //Message console
+        // Message console
         private static readonly int _messageWidth = 80;
         private static readonly int _messageHeight = 11;
         private static RLConsole _messageConsole;
 
-        //Stats console
+        // Stats console
         private static readonly int _statWidth = 20;
         private static readonly int _statHeight = 70;
         private static RLConsole _statConsole;
 
-        //Inventory console
+        // Inventory console
         private static readonly int _inventoryWidth = 80;
         private static readonly int _inventoryHeight = 11;
         private static RLConsole _inventoryConsole;
@@ -116,6 +116,7 @@ namespace GameOfAllTimes
                             if (that.Next == null)
                             {
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
+                                // If this is going to be a final level
                                 if (_mapLevel == 1)
                                 {
                                     SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
@@ -131,9 +132,9 @@ namespace GameOfAllTimes
                                     _rootConsole.Title = $"RougeSharp RLNet Tutorial - Level {_mapLevel}";
                                     didPlayerAct = true;
                                 }
+                                // Creating generic level
                                 else
                                 {
-
                                     SchedulingSystem A_SchedulingSystem = new SchedulingSystem();
                                     SchedSystem = SchedSystem.Next;
                                     SchedSystem = SchedulingSystems.AddLast(A_SchedulingSystem);
@@ -151,6 +152,7 @@ namespace GameOfAllTimes
                                 that = that.Next;
                                 that = Levels.AddLast(DungeonMap);
                             }
+                            // Moving to already created level
                             else
                             {
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
@@ -171,6 +173,7 @@ namespace GameOfAllTimes
                                 that = that.Next;
                             }
                         }
+                        // Moving to the previous level
                         if (DungeonMap.CanMoveUpToPreviousLevel())
                         {
                             if (that.Previous != null)

@@ -59,7 +59,6 @@ D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\OpenTK.dll
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RLNET.dll
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RogueSharp.dll
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\OpenTK.xml
-D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\OpenTK.dll.config
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\bin\Debug\RogueSharp.xml
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.csprojResolveAssemblyReference.cache
 D:\Projects\GameOfAllTimesULTRA_ALPHA\GameOfAllTimes\obj\Debug\GameOfAllTimes.csproj.CoreCompileInputs.cache

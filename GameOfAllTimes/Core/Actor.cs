@@ -2,6 +2,7 @@
 using RLNET;
 using RogueSharp;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameOfAllTimes.Core
 {
@@ -189,18 +190,14 @@ namespace GameOfAllTimes.Core
             }
             else
             {
-                foreach (Cell cell in AreaControlled)
+                if (!map.GetCell(X, Y).IsExplored)
                 {
-                    if (!cell.IsExplored)
-                    {
-                        return;
-                    }
-                    if (map.IsInFov(cell.X, cell.Y))
-                    {
-                        console.Set(X, Y, Size, Size, Color, Colors.FloorBackgroundFov, Symbol);
-                    }
+                    return;
                 }
-
+                if (AreaControlled.Any(cell => map.IsInFov(cell.X, cell.Y)))
+                {
+                    console.Set(X, Y, Size, Size, Color, Colors.FloorBackgroundFov, Symbol);
+                }
             }
         }
     }
