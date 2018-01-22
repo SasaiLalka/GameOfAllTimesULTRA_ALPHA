@@ -47,11 +47,11 @@ namespace GameOfAllTimes.Behaviours
                 dungeonMap.SetIsWalkable(player.X, player.Y, false);
                 if (path != null)
                 {
-                    try
+                    if (path.Steps.First() != null)
                     {
-                        commandSystem.MoveMonster(monster, path.Steps.First());
+                        commandSystem.MoveMonster(monster, path.StepForward());
                     }
-                    catch (NoMoreStepsException)
+                    else
                     {
                         Game.MessageLog.Add($"{monster.Name} growls in frustration");
                     }

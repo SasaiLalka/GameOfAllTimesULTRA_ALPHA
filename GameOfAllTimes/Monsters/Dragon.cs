@@ -16,7 +16,7 @@ namespace GameOfAllTimes.Monsters
             int health = Dice.Roll("4D10");
             return new Dragon
             {
-                AreaControlled = new List<Cell>(),
+                AreaControlled = new List<ICell>(),
                 Attack = Dice.Roll("1D3") + level / 3,
                 AttackChance = Dice.Roll("30D3"),
                 Awareness = 15,

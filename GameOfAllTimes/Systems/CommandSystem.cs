@@ -89,7 +89,9 @@ namespace GameOfAllTimes.Systems
             if (defender is Player)
             {
                 Game.MessageLog.Add($"{defender.Name} was killed. GAME OVER MAAAN GAME OVER!!!");
-                
+                Game._rootConsole.Close();
+                Menu.DeathMenu();
+
             }
             else if (defender is Monster)
             {
@@ -166,7 +168,7 @@ namespace GameOfAllTimes.Systems
             }
         }
 
-        public void MoveMonster(Monster monster, Cell cell)
+        public void MoveMonster(Monster monster, ICell cell)
         {
             if (monster.Size == 1)
             {
@@ -188,17 +190,17 @@ namespace GameOfAllTimes.Systems
                     Game.DungeonMap.SetIsWalkable(tile.X, tile.Y, true);
                 }
                 // Defining the area, which must be controlled by monster
-                List<Cell> DesiredArea = Game.DungeonMap.GetCellsInArea(cell.X, cell.Y, 1).ToList();
+                List<ICell> DesiredArea = Game.DungeonMap.GetCellsInSquare(cell.X, cell.Y, 1).ToList();
                 // If there are no obstacles
                 if (DesiredArea.All(c => c.IsWalkable))
                 {
                     monster.X = DesiredArea[0].X;
                     monster.Y = DesiredArea[0].Y;
-                    foreach (Cell tile in monster.AreaControlled.ToArray())
+                    foreach (ICell tile in monster.AreaControlled.ToArray())
                     {
                         monster.AreaControlled.RemoveAll(c => c.X == tile.X && c.Y == tile.Y);
                     }
-                    foreach (Cell tile in DesiredArea)
+                    foreach (ICell tile in DesiredArea)
                     {
                         monster.AreaControlled.Add(tile);
                     }

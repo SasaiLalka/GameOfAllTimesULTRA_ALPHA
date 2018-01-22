@@ -83,7 +83,7 @@ namespace GameOfAllTimes.Systems
                 {
                     Console.Clear();
 
-                    DrawName(temp);
+                    DrawName();
 
                     Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.CursorTop + 3);
 
@@ -188,7 +188,7 @@ namespace GameOfAllTimes.Systems
             {
                 Console.Clear();
 
-                DrawName(temp);
+                DrawName();
 
                 Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.CursorTop + 3);
 
@@ -233,6 +233,8 @@ namespace GameOfAllTimes.Systems
                     // Restart
                     pause = 1;
                     Game._rootConsole.Close();
+                    ShowWindow(GetConsoleWindow(), 0);
+                    Game.NewGameStart();
                     break;
                 case 2:
                     // To main menu
@@ -240,20 +242,59 @@ namespace GameOfAllTimes.Systems
                     Game._rootConsole.Close();
                     break;
                 case 3:
+                    // Exit
                     pause = 3;
                     Game._rootConsole.Close();
                     break;
             }
         }
+        public static void DeathMenu()
+        {
+            string temp = "███████████████████████████████████████";
 
+            ShowWindow(GetConsoleWindow(), 1);
+
+            Console.Clear();
+
+            Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 5);
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.CursorTop);
+            DrawOnCenter("██─██─████─█──█");
+            DrawOnCenter("─███──█──█─█──█");
+            DrawOnCenter("──█───█──█─█──█");
+            DrawOnCenter("──█───█──█─█──█");
+            DrawOnCenter("──█───████─████");
+            DrawOnCenter("──█────────────");
+            DrawOnCenter(" ");
+            DrawOnCenter("████──███─███─████ ");
+            DrawOnCenter("█──██──█──█───█──██");
+            DrawOnCenter("█──██──█──███─█──██");
+            DrawOnCenter("█──██──█──█───█──██");
+            DrawOnCenter("████──███─███─████ ");
+
+            Console.CursorTop += 4;
+
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+
+            DrawOnCenter("Press any key to continue");
+            Console.ReadKey();
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+
+        }
+        
         public static void DrawOnCenter(string str)
         {
             Console.SetCursorPosition((Console.WindowWidth - str.Length) / 2, Console.CursorTop);
             Console.WriteLine(str);
         }
 
-        public static void DrawName(string temp)
+        public static void DrawName()
         {
+            string temp = "███████████████████████████████████████";
             Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 6);
 
             Console.ForegroundColor = ConsoleColor.Cyan;

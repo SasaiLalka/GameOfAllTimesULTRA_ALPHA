@@ -140,7 +140,7 @@ namespace GameOfAllTimes.Core
             }
             else
             {
-                foreach (Cell cell in GetCellsInArea(monster.X + 1, monster.Y + 1, 1))
+                foreach (Cell cell in GetCellsInSquare(monster.X + 1, monster.Y + 1, 1))
                 {
                     SetIsWalkable(cell.X, cell.Y, false);
                     monster.AreaControlled.Add(GetCell(cell.X, cell.Y));
@@ -151,19 +151,16 @@ namespace GameOfAllTimes.Core
 
         public Point GetRandomWalkableLocationInRoom (Rectangle room)
         {
-            if (DoesRoomHaveWalkableSpace(room))
+            for (int i = 0; i < 100; i++)
             {
-                for (int i = 0; i < 100; i++)
+                int x = Game.Random.Next(1, room.Width - 2) + room.X;
+                int y = Game.Random.Next(1, room.Height - 2) + room.Y;
+                if (IsWalkable(x, y))
                 {
-                    int x = Game.Random.Next(1, room.Width - 2) + room.X;
-                    int y = Game.Random.Next(1, room.Height - 2) + room.Y;
-                    if (IsWalkable(x, y))
-                    {
-                        return new Point(x, y);
-                    }
+                    return new Point(x, y);
                 }
             }
-            return null;
+            return new Point(1 + room.X, 1 + room.Y);
         }
 
         public bool DoesRoomHaveWalkableSpace(Rectangle room)
@@ -187,7 +184,7 @@ namespace GameOfAllTimes.Core
         {
             Player player = Game.Player;
             ComputeFov(player.X, player.Y, player.Awareness, true);
-            foreach (Cell cell in GetAllCells())
+            foreach (ICell cell in GetAllCells())
             {
                 if (IsInFov(cell.X, cell.Y))
                 {
@@ -195,7 +192,6 @@ namespace GameOfAllTimes.Core
                 }
             }
         }
-
 
         // Setting position for actor situated on one cell
         // Gets the actor himself and coordinates of desired cell
@@ -229,7 +225,7 @@ namespace GameOfAllTimes.Core
 
         public void SetIsWalkable(int x, int y, bool isWalkable)
         {
-            Cell cell = GetCell(x, y);
+            ICell cell = GetCell(x, y);
             SetCellProperties(cell.X, cell.Y, cell.IsTransparent, isWalkable, cell.IsExplored);
         }
 

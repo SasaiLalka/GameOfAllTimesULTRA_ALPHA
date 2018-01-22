@@ -122,20 +122,26 @@ namespace GameOfAllTimes.Systems
         // Placing monsters on the level
         private void PlaceMonsters()
         {
-            foreach(var room in _map.Rooms)
+            while (_map._monsters.Count == 0)
             {
-                if (Dice.Roll("1D10") < 8)
+                foreach (var room in _map.Rooms)
                 {
-                    var numberOfMonsters = Dice.Roll("1D4");
-                    for (int i = 0; i < numberOfMonsters; i++)
+                    if (!_map.Rooms.First().Equals(room))
                     {
-                        Point randomRoomLocation = _map.GetRandomWalkableLocationInRoom(room);
-                        if (randomRoomLocation != null)
+                        if (Dice.Roll("1D10") < 8)
                         {
-                            var monster = Kobold.Create(1);
-                            monster.X = randomRoomLocation.X;
-                            monster.Y = randomRoomLocation.Y;
-                            _map.AddMonster(monster);
+                            var numberOfMonsters = Dice.Roll("1D4");
+                            for (int i = 0; i < numberOfMonsters; i++)
+                            {
+                                Point randomRoomLocation = _map.GetRandomWalkableLocationInRoom(room);
+                                if (randomRoomLocation != null)
+                                {
+                                    var monster = Kobold.Create(1);
+                                    monster.X = randomRoomLocation.X;
+                                    monster.Y = randomRoomLocation.Y;
+                                    _map.AddMonster(monster);
+                                }
+                            }
                         }
                     }
                 }
@@ -180,12 +186,12 @@ namespace GameOfAllTimes.Systems
             int yMin = room.Top;
             int yMax = room.Bottom;
 
-            List<Cell> borderCells = _map.GetCellsAlongLine(xMin, yMin, xMax, yMin).ToList();
+            List<ICell> borderCells = _map.GetCellsAlongLine(xMin, yMin, xMax, yMin).ToList();
             borderCells.AddRange(_map.GetCellsAlongLine(xMin, yMin, xMin, yMax));
             borderCells.AddRange(_map.GetCellsAlongLine(xMin, yMax, xMax, yMax));
             borderCells.AddRange(_map.GetCellsAlongLine(xMax, yMin, xMax, yMax));
 
-            foreach (Cell cell in borderCells)
+            foreach (ICell cell in borderCells)
             {
                 if (IsPotentialDoor(cell))
                 {
@@ -201,7 +207,7 @@ namespace GameOfAllTimes.Systems
             }
         }
 
-        private bool IsPotentialDoor(Cell cell)
+        private bool IsPotentialDoor(ICell cell)
         {
             // If the cell is not walkable
             // then it is a wall and not a good place for a door
@@ -211,10 +217,10 @@ namespace GameOfAllTimes.Systems
             }
 
             // Store references to all of the neighboring cells 
-            Cell right = _map.GetCell(cell.X + 1, cell.Y);
-            Cell left = _map.GetCell(cell.X - 1, cell.Y);
-            Cell top = _map.GetCell(cell.X, cell.Y - 1);
-            Cell bottom = _map.GetCell(cell.X, cell.Y + 1);
+            ICell right = _map.GetCell(cell.X + 1, cell.Y);
+            ICell left = _map.GetCell(cell.X - 1, cell.Y);
+            ICell top = _map.GetCell(cell.X, cell.Y - 1);
+            ICell bottom = _map.GetCell(cell.X, cell.Y + 1);
 
             // Make sure there is not already a door here
             if (_map.GetDoor(cell.X, cell.Y) != null ||

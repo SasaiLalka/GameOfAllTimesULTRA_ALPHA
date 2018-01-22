@@ -16,7 +16,7 @@ namespace GameOfAllTimes.Monsters
             int health = Dice.Roll("2D5");
             return new Kobold
             {
-                AreaControlled = new List<Cell>(),
+                AreaControlled = new List<ICell>(),
                 Attack = Dice.Roll("1D3") + level / 3,
                 AttackChance = Dice.Roll("25D3"),
                 Awareness = 10,

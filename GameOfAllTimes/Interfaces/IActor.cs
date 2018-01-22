@@ -9,7 +9,7 @@ namespace GameOfAllTimes.Interfaces
 {
     public interface IActor
     {
-        List<Cell> AreaControlled { get; set; }
+        List<ICell> AreaControlled { get; set; }
         int Attack { get; set; }
         int AttackChance { get; set; }
         int Awareness { get; set; }

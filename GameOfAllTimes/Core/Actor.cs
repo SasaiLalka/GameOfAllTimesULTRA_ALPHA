@@ -8,7 +8,7 @@ namespace GameOfAllTimes.Core
 {
     public class Actor : IActor, IDrawable, IScheduleable
     {
-        private List<Cell> _areaControlled;
+        private List<ICell> _areaControlled;
         private int _attack;
         private int _attackChance;
         private int _awareness;
@@ -154,7 +154,7 @@ namespace GameOfAllTimes.Core
             }
         }
 
-        public List<Cell> AreaControlled
+        public List<ICell> AreaControlled
         {
             get
             {

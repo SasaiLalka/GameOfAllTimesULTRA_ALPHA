@@ -57,6 +57,7 @@ namespace GameOfAllTimes
         {
             Menu.PrintMenu();
         }
+
         private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
         {
             _inventoryConsole.SetBackColor(0, 0, _inventoryWidth, _inventoryHeight, Swatch.DbWood);
@@ -68,13 +69,22 @@ namespace GameOfAllTimes
                 if (keyPress != null)
                 {
                     if (keyPress.Key == RLKey.Up)
+                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Up);
+                    }
                     else if (keyPress.Key == RLKey.Down)
+                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Down);
+                    }
                     else if (keyPress.Key == RLKey.Left)
+                    {
+
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Left);
+                    }
                     else if (keyPress.Key == RLKey.Right)
+                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Right);
+                    }
                     else if (keyPress.Key == RLKey.Escape)
                     {
                         Menu.Pause();
@@ -233,12 +243,5 @@ namespace GameOfAllTimes
             _rootConsole.Render += OnRootConsoleRender;
             _rootConsole.Run();
         }
-
-        // Установки для меню
-        void BeforeMenuSetup()
-        {
-
-        }
-
     }
 }

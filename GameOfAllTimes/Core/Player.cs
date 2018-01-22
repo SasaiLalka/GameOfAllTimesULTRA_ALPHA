@@ -7,7 +7,7 @@ namespace GameOfAllTimes.Core
     {
         public Player()
         {
-            AreaControlled = new List<Cell>();
+            AreaControlled = new List<ICell>();
             Attack = 2;
             AttackChance = 50;
             Awareness = 15;
