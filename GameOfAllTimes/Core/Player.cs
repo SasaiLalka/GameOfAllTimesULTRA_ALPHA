@@ -15,13 +15,20 @@ namespace GameOfAllTimes.Core
             Defense = 2;
             DefenseChance = 40;
             Gold = 0;
-            Health = 100;
+            Health = 1;
             MaxHealth = 100;
             Name = "Rogue";
             Speed = 10;
             Symbol = '@';
             Size = 1;
+            Kills = 0;
         }
+
+        // Счетчик убитых мобов
+        public int Kills { get; set; }
+        // Счетчик ходов
+
+
         public void DrawStats(RLConsole statConsole)
         {
             statConsole.Print(1, 1, $"Name:    {Name}", Colors.Text);

@@ -6,11 +6,18 @@ using RogueSharp.Random;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace GameOfAllTimes
 {
     class Game
     {
+        //Game time
+        public static Stopwatch time = new Stopwatch();
+        public static TimeSpan ts;
+
+        // Steps counter
+        public static int _steps;
 
         //Main Console
         private static readonly int _screenWidth = 100;
@@ -39,7 +46,7 @@ namespace GameOfAllTimes
 
         private static bool _renderRequired = true;
 
-        private static int _mapLevel = 1;
+        public static int _mapLevel = 1;
 
         public static Player Player { get; set; }
         public static DungeonMap DungeonMap { get; private set; }
@@ -66,25 +73,23 @@ namespace GameOfAllTimes
             RLKeyPress keyPress = _rootConsole.Keyboard.GetKeyPress();
             if (CommandSystem.IsPlayerTurn)
             {
+                if (CommandSystem.PlayerIsDead)
+                {
+                    Game._rootConsole.Close();
+                    Game.time.Stop();
+                    Game.ts = Game.time.Elapsed;
+                    Menu.DeathMenu(CommandSystem.KilledBy);
+                }
                 if (keyPress != null)
                 {
                     if (keyPress.Key == RLKey.Up)
-                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Up);
-                    }
                     else if (keyPress.Key == RLKey.Down)
-                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Down);
-                    }
                     else if (keyPress.Key == RLKey.Left)
-                    {
-
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Left);
-                    }
                     else if (keyPress.Key == RLKey.Right)
-                    {
                         didPlayerAct = CommandSystem.MovePlayer(Direction.Right);
-                    }
                     else if (keyPress.Key == RLKey.Escape)
                     {
                         Menu.Pause();
@@ -178,6 +183,7 @@ namespace GameOfAllTimes
                 }
                 if (didPlayerAct)
                 {
+                    _steps++;
                     _renderRequired = true;
                     CommandSystem.EndPlayerTurn();
                 }
@@ -213,10 +219,12 @@ namespace GameOfAllTimes
 
         public static void NewGameStart()
         {
+            time.Restart();
             string FontFileName = "terminal8x8.png";
             string ConsoleTitile = "Tutorial";
             int Seed = (int)DateTime.UtcNow.Ticks;
             Random = new DotNetRandom(Seed);
+            _steps = 0;
 
             Levels = new LinkedList<DungeonMap>();
 

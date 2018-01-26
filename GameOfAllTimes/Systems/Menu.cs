@@ -23,7 +23,9 @@ namespace GameOfAllTimes.Systems
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         // Музыка
-        static SoundPlayer music = new SoundPlayer("menu.wav");
+        static SoundPlayer music = new SoundPlayer(@"Materials\menu.wav");
+        static SoundPlayer choose = new SoundPlayer(@"Materials\choose.wav");
+        static SoundPlayer death = new SoundPlayer(@"Materials\death.wav");
         // Контроль паузы 
         static int pause = 0;
 
@@ -48,11 +50,8 @@ namespace GameOfAllTimes.Systems
                         switch (pause)
                         {
                             case 1:
-                                Game.NewGameStart();
-                                break;
-                            case 2:
                                 continue;
-                            case 3:
+                            case 2:
                                 return;
                         }
                     }
@@ -67,6 +66,7 @@ namespace GameOfAllTimes.Systems
             // Настройки консоли
             Console.SetWindowSize(80, 22);
             Console.SetBufferSize(80, 22);
+            Console.CursorVisible = false;
             Console.Title = "Magicave";
             // Выбор
             string[] menuItems = { "New game", "Load game", "Help", "Exit" };
@@ -78,7 +78,6 @@ namespace GameOfAllTimes.Systems
             while (flag == true)
             {
                 Console.Clear();
-                Console.CursorVisible = false;
                 do
                 {
                     Console.Clear();
@@ -104,7 +103,7 @@ namespace GameOfAllTimes.Systems
                             Console.WriteLine(menuItems[i]);
                         }
                     }
-                    key = Console.ReadKey();
+                    key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.UpArrow)
                     {
                         counter--;
@@ -148,7 +147,7 @@ namespace GameOfAllTimes.Systems
         public static void Help()
         {
             Console.Clear();
-            Console.CursorVisible = true;
+            Console.CursorVisible = false;
             Console.CursorTop = Console.WindowHeight / 6;
             Console.BackgroundColor = ConsoleColor.Cyan;
             Console.ForegroundColor = ConsoleColor.Black;
@@ -170,13 +169,14 @@ namespace GameOfAllTimes.Systems
             DrawOnCenter("Press . or > to use stairs");
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.ReadLine();
+            Console.ReadKey(true);
 
             Console.SetCursorPosition(0, 0);
         }
 
         public static void Pause()
         {
+            Game.time.Stop();
             // Показ консольного окна
             ShowWindow(GetConsoleWindow(), 1);
             // Переменная, для определение размера строки
@@ -209,14 +209,16 @@ namespace GameOfAllTimes.Systems
                         Console.WriteLine(pauseItems[i]);
                     }
                 }
-                key = Console.ReadKey();
+                key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.UpArrow)
                 {
+                    choose.Play();
                     counter--;
                     if (counter == -1) counter = pauseItems.Length - 1;
                 }
                 if (key.Key == ConsoleKey.DownArrow)
                 {
+                    choose.Play();
                     counter++;
                     if (counter == pauseItems.Length) counter = 0;
                 }
@@ -231,30 +233,37 @@ namespace GameOfAllTimes.Systems
                     break;
                 case 1:
                     // Restart
-                    pause = 1;
                     Game._rootConsole.Close();
                     ShowWindow(GetConsoleWindow(), 0);
+                    Game.time.Restart();
                     Game.NewGameStart();
                     break;
                 case 2:
                     // To main menu
-                    pause = 2;
+                    pause = 1;
                     Game._rootConsole.Close();
                     break;
                 case 3:
                     // Exit
-                    pause = 3;
+                    pause = 2;
                     Game._rootConsole.Close();
                     break;
             }
+            Game.time.Start();
         }
-        public static void DeathMenu()
+
+        public static void DeathMenu(string killed_by)
         {
             string temp = "███████████████████████████████████████";
+            ConsoleKeyInfo key;
 
             ShowWindow(GetConsoleWindow(), 1);
 
             Console.Clear();
+
+            death.Play();
+
+            CommandSystem.PlayerIsDead = false;
 
             Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 5);
 
@@ -284,8 +293,64 @@ namespace GameOfAllTimes.Systems
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
 
+            Console.Clear();
+
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}",
+            Game.ts.Hours, Game.ts.Minutes, Game.ts.Seconds);
+
+            Console.CursorTop = 1;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.BackgroundColor = ConsoleColor.Black;
+            DrawOnCenter("╔══╦════╦══╦════╦══╗");
+            DrawOnCenter("║╔═╩═╗╔═╣╔╗╠═╗╔═╣╔═╝");
+            DrawOnCenter("║╚═╗─║║─║╚╝║─║║─║╚═╗");
+            DrawOnCenter("╚═╗║─║║─║╔╗║─║║─╚═╗║");
+            DrawOnCenter("╔═╝║─║║─║║║║─║║─╔═╝║");
+            DrawOnCenter("╚══╝─╚╝─╚╝╚╝─╚╝─╚══╝");
+            Console.CursorTop += 2;
+            Console.CursorLeft = 30;
+            Console.WriteLine("Dungeoneer:\t" + Game.Player.Name);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Level:    \t" + Game._mapLevel);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Time:     \t" + elapsedTime);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Moves:    \t" + Game._steps);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Gold:     \t" + Game.Player.Gold);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Kills:    \t" + Game.Player.Kills);
+            Console.CursorLeft = 30;
+            Console.WriteLine("Killed by:\t" + killed_by);
+
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.CursorTop += 2;
+            DrawOnCenter("Esc to return to main menu");
+            DrawOnCenter("Space to quick restart");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    pause = 1;
+                    Game._rootConsole.Close();
+                    break;
+                }
+                if (key.Key == ConsoleKey.Spacebar)
+                {
+                    ShowWindow(GetConsoleWindow(), 0);
+                    Game.time.Restart();
+                    Game.NewGameStart();
+                    break;
+                }
+            }
+            while (key.Key != ConsoleKey.Escape);
         }
-        
+
         public static void DrawOnCenter(string str)
         {
             Console.SetCursorPosition((Console.WindowWidth - str.Length) / 2, Console.CursorTop);
@@ -295,6 +360,7 @@ namespace GameOfAllTimes.Systems
         public static void DrawName()
         {
             string temp = "███████████████████████████████████████";
+
             Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 6);
 
             Console.ForegroundColor = ConsoleColor.Cyan;

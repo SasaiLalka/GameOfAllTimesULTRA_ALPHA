@@ -12,7 +12,14 @@ namespace GameOfAllTimes.Systems
 {
     public class CommandSystem
     {
+        public static bool PlayerIsDead { get; set; }
+        public static string KilledBy { get; set; }
         public bool IsPlayerTurn { get; set; }
+
+        //public CommandSystem()
+        //{
+        //    PlayerIsDead = false;
+        //}
         public bool MovePlayer(Direction direction)
         {
             int x = Game.Player.X;
@@ -66,9 +73,9 @@ namespace GameOfAllTimes.Systems
                 Game.MessageLog.Add(defenseMessage.ToString());
             }
             int damage = hits - blocks;
-            ResolveDamage(defender, damage);
+            ResolveDamage(attacker, defender, damage);
         }
-        private static void ResolveDamage(Actor defender, int damage)
+        private static void ResolveDamage(Actor attacker, Actor defender, int damage)
         {
             if (damage > 0)
             {
@@ -76,7 +83,7 @@ namespace GameOfAllTimes.Systems
                 Game.MessageLog.Add($" {defender.Name} was hit for {damage} damage");
                 if (defender.Health <= 0)
                 {
-                    ResolveDeath(defender);
+                    ResolveDeath(attacker, defender);
                 }
             }
             else
@@ -84,18 +91,17 @@ namespace GameOfAllTimes.Systems
                 Game.MessageLog.Add($"{defender.Name} blocks all damage.");
             }
         }
-        private static void ResolveDeath(Actor defender)
+        private static void ResolveDeath(Actor attacker, Actor defender)
         {
             if (defender is Player)
             {
-                Game.MessageLog.Add($"{defender.Name} was killed. GAME OVER MAAAN GAME OVER!!!");
-                Game._rootConsole.Close();
-                Menu.DeathMenu();
-
+                PlayerIsDead = true;
+                KilledBy = attacker.Name;
             }
             else if (defender is Monster)
             {
                 Game.Player.Gold += defender.Gold;
+                Game.Player.Kills++;
                 Game.DungeonMap.RemoveMonster((Monster)defender);
                 Game.MessageLog.Add($"  {defender.Name} died and dropped {defender.Gold} gold");
             }
@@ -185,7 +191,7 @@ namespace GameOfAllTimes.Systems
             else
             {
                 // Clearing controlled area for calculating next path
-                foreach (Cell tile in monster.AreaControlled)
+                foreach (ICell tile in monster.AreaControlled)
                 {
                     Game.DungeonMap.SetIsWalkable(tile.X, tile.Y, true);
                 }
@@ -211,7 +217,7 @@ namespace GameOfAllTimes.Systems
                     Attack(monster, Game.Player);
                 }
                 // Setting cells controlled by monster not walkable
-                foreach (Cell tile in monster.AreaControlled)
+                foreach (ICell tile in monster.AreaControlled)
                 {
                     Game.DungeonMap.SetIsWalkable(tile.X, tile.Y, false);
                 }
