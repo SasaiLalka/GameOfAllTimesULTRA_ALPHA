@@ -92,9 +92,7 @@
     <Compile Include="Systems\DungeonGenerator.cs" />
     <Compile Include="Systems\Menu.cs" />
     <Compile Include="Systems\MessageLog.cs" />
-    <Compile Include="Systems\PerlinNoise.cs" />
     <Compile Include="Systems\SchedulingSystem.cs" />
-    <Compile Include="Systems\WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

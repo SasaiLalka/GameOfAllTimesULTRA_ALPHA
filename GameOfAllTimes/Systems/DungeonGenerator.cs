@@ -95,11 +95,11 @@ namespace GameOfAllTimes.Systems
 
             PlacePlayer();
 
-            var monster = Dragon.Create(1);
-            monster.X = bossSpawn.Center.X;
-            monster.Y = bossSpawn.Center.Y;
+            var dragon = Dragon.Create(1);
+            dragon.X = bossSpawn.Center.X;
+            dragon.Y = bossSpawn.Center.Y;
 
-            _map.AddMonster(monster);
+            _map.AddMonster(dragon);
 
             CreateStairs();
             // Setting the second stairs at 0,0 to avoid exception

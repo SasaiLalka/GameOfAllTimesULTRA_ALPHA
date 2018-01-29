@@ -78,7 +78,14 @@ namespace GameOfAllTimes
                     Game._rootConsole.Close();
                     Game.time.Stop();
                     Game.ts = Game.time.Elapsed;
-                    Menu.DeathMenu(CommandSystem.KilledBy);
+                    Menu.DeathMenu();
+                }
+                if (CommandSystem.GameIsEnded)
+                {
+                    Game._rootConsole.Close();
+                    Game.time.Stop();
+                    Game.ts = Game.time.Elapsed;
+                    Menu.WinMenu();
                 }
                 if (keyPress != null)
                 {

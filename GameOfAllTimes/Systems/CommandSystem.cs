@@ -5,21 +5,18 @@ using RLNET;
 using RogueSharp;
 using System.Text;
 using RogueSharp.DiceNotation;
-using GameOfAllTimes.Behaviours;
 using GameOfAllTimes.Interfaces;
+using GameOfAllTimes.Monsters;
 
 namespace GameOfAllTimes.Systems
 {
     public class CommandSystem
     {
         public static bool PlayerIsDead { get; set; }
+        public static bool GameIsEnded { get; set; }
         public static string KilledBy { get; set; }
         public bool IsPlayerTurn { get; set; }
 
-        //public CommandSystem()
-        //{
-        //    PlayerIsDead = false;
-        //}
         public bool MovePlayer(Direction direction)
         {
             int x = Game.Player.X;
@@ -100,6 +97,10 @@ namespace GameOfAllTimes.Systems
             }
             else if (defender is Monster)
             {
+                if(defender is Dragon)
+                {
+                    GameIsEnded = true;
+                }
                 Game.Player.Gold += defender.Gold;
                 Game.Player.Kills++;
                 Game.DungeonMap.RemoveMonster((Monster)defender);

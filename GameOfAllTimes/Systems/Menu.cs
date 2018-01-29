@@ -252,18 +252,15 @@ namespace GameOfAllTimes.Systems
             Game.time.Start();
         }
 
-        public static void DeathMenu(string killed_by)
+        public static void DeathMenu()
         {
             string temp = "███████████████████████████████████████";
-            ConsoleKeyInfo key;
 
             ShowWindow(GetConsoleWindow(), 1);
 
             Console.Clear();
 
             death.Play();
-
-            CommandSystem.PlayerIsDead = false;
 
             Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 5);
 
@@ -293,6 +290,59 @@ namespace GameOfAllTimes.Systems
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
 
+            CommandSystem.PlayerIsDead = false;
+
+            DrawStats(CommandSystem.PlayerIsDead);
+        }
+
+        public static void WinMenu()
+        {
+            string temp = "███████████████████████████████████████";
+
+            ShowWindow(GetConsoleWindow(), 1);
+
+            Console.Clear();
+
+            death.Play();
+
+            Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.WindowHeight / 5);
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.SetCursorPosition((Console.WindowWidth - temp.Length) / 2, Console.CursorTop);
+
+            DrawOnCenter("██─██─████─█──█");
+            DrawOnCenter("─███──█──█─█──█");
+            DrawOnCenter("──█───█──█─█──█");
+            DrawOnCenter("──█───█──█─█──█");
+            DrawOnCenter("──█───████─████");
+            DrawOnCenter("──█────────────");
+            DrawOnCenter(" ");
+            DrawOnCenter("█───█─███─█──█");
+            DrawOnCenter("█───█──█──██─█");
+            DrawOnCenter("█─█─█──█──█─██");
+            DrawOnCenter("█████──█──█──█");
+            DrawOnCenter("─█─█──███─█──█");
+
+            Console.CursorTop += 4;
+
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+
+            DrawOnCenter("Press any key to continue");
+            Console.ReadKey();
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            CommandSystem.GameIsEnded = false;
+
+            DrawStats(CommandSystem.PlayerIsDead);
+        }
+
+        public static void DrawStats (bool flag)
+        {
+            ConsoleKeyInfo key;
+
             Console.Clear();
 
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}",
@@ -308,20 +358,39 @@ namespace GameOfAllTimes.Systems
             DrawOnCenter("╔═╝║─║║─║║║║─║║─╔═╝║");
             DrawOnCenter("╚══╝─╚╝─╚╝╚╝─╚╝─╚══╝");
             Console.CursorTop += 2;
-            Console.CursorLeft = 30;
-            Console.WriteLine("Dungeoneer:\t" + Game.Player.Name);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Level:    \t" + Game._mapLevel);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Time:     \t" + elapsedTime);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Moves:    \t" + Game._steps);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Gold:     \t" + Game.Player.Gold);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Kills:    \t" + Game.Player.Kills);
-            Console.CursorLeft = 30;
-            Console.WriteLine("Killed by:\t" + killed_by);
+
+            if (flag)
+            {
+                Console.CursorLeft = 30;
+                Console.WriteLine("Dungeoneer:\t" + Game.Player.Name);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Level:    \t" + Game._mapLevel);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Time:     \t" + elapsedTime);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Moves:    \t" + Game._steps);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Gold:     \t" + Game.Player.Gold);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Kills:    \t" + Game.Player.Kills);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Killed by:\t" + CommandSystem.KilledBy);
+            }
+            else
+            {
+                Console.CursorLeft = 30;
+                Console.WriteLine("Dungeoneer:\t" + Game.Player.Name);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Time:     \t" + elapsedTime);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Moves:    \t" + Game._steps);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Gold:     \t" + Game.Player.Gold);
+                Console.CursorLeft = 30;
+                Console.WriteLine("Kills:    \t" + Game.Player.Kills);
+                Console.CursorLeft = 30;
+                DrawOnCenter("KNOCKOUT!");
+            }
 
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.Cyan;
