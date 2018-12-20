@@ -38,7 +38,7 @@ namespace MagiCave.Behaviours
                 // Calculating the path from the central part of the monster
                 try
                 {
-                    path = pathFinder.ShortestPath(monster.AreaControlled[4], dungeonMap.GetCell(player.X, player.Y));
+                    path = pathFinder.ShortestPath(monster.AreaControlled[monster.AreaControlled.Count / 2], dungeonMap.GetCell(player.X, player.Y));
                 }
                 catch
                 {

@@ -11,6 +11,10 @@ namespace MagiCave.Systems
         {
             lines = new Queue<string>();
         }
+        public void Clear()
+        {
+            lines.Clear();
+        }
         public void Add(string message)
         {
             lines.Enqueue(message);

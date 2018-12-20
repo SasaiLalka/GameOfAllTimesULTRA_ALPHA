@@ -31,8 +31,8 @@ namespace MagiCave.Systems
         [XmlElement(ElementName = "MonstersOnLevel")]
         public Monster[][] MonstersOnLevel;
 
-        [XmlElement(ElementName = "Rooms")]
-        public Rectangle[][] Rooms;
+        //[XmlElement(ElementName = "Rooms")]
+        //public Rectangle[][] Rooms;
 
         [XmlElement(ElementName = "Random")]
         public RandomState Random;
@@ -49,14 +49,14 @@ namespace MagiCave.Systems
             {
                 Levels = new MapState[Game.Levels.Count];
                 MonstersOnLevel = new Monster[Game.Levels.Count][];
-                Rooms = new Rectangle[Game.Levels.Count][];
+                //Rooms = new Rectangle[Game.Levels.Count][];
                 Doors = new Door[Game.Levels.Count][];
                 int i = 0;
                 foreach (DungeonMap map in Game.Levels)
                 {
                     int j = 0;
                     MonstersOnLevel[i] = new Monster[map.Monsters.Count];
-                    Rooms[i] = new Rectangle[map.Rooms.Count];
+                    //Rooms[i] = new Rectangle[map.Rooms.Count];
                     Doors[i] = new Door[map.Doors.Count];
                     foreach (Door d in map.Doors)
                     {
@@ -64,11 +64,11 @@ namespace MagiCave.Systems
                         j++;
                     }
                     j = 0;
-                    foreach (Rectangle room in map.Rooms)
-                    {
-                        Rooms[i][j] = room;
-                        j++;
-                    }
+                    //foreach (Rectangle room in map.Rooms)
+                    //{
+                    //    Rooms[i][j] = room;
+                    //    j++;
+                    //}
                     j = 0;
                     foreach (Monster monster in map.Monsters)
                     {
@@ -120,7 +120,7 @@ namespace MagiCave.Systems
 
                 int TotalLevels = Convert.ToInt32(reader.ReadElementString("TotalLevels"));
                 Levels = new MapState[TotalLevels];
-                Rooms = new Rectangle[TotalLevels][];
+                //Rooms = new Rectangle[TotalLevels][];
                 MonstersOnLevel = new Monster[TotalLevels][];
                 Doors = new Door[TotalLevels][];
                 XmlSerializer deserializer = new XmlSerializer(typeof(MapState));
@@ -129,15 +129,15 @@ namespace MagiCave.Systems
                 {
                     reader.ReadStartElement("DungeonMapLevel", i.ToString());
                     Levels[i] = (MapState)deserializer.Deserialize(reader);
-                    // Loading all rectangles on the level
-                    reader.ReadStartElement("Rooms");
-                    int AmOfRooms = Convert.ToInt32(reader.ReadElementString("Amount"));
-                    Rooms[i] = new Rectangle[AmOfRooms];
-                    for (int j = 0; j < AmOfRooms; j++)
-                    {
-                        Rooms[i][j] = (Rectangle)ReckDesializer.Deserialize(reader);
-                    }
-                    reader.ReadEndElement();
+                    //// Loading all rectangles on the level
+                    //reader.ReadStartElement("Rooms");
+                    //int AmOfRooms = Convert.ToInt32(reader.ReadElementString("Amount"));
+                    ////Rooms[i] = new Rectangle[AmOfRooms];
+                    //for (int j = 0; j < AmOfRooms; j++)
+                    //{
+                    //    //Rooms[i][j] = (Rectangle)ReckDesializer.Deserialize(reader);
+                    //}
+                    //reader.ReadEndElement();
                     // Loading all doors on the level
                     reader.ReadStartElement("Doors");
                     int AmOfDoors = Convert.ToInt32(reader.ReadElementString("Amount"));
@@ -205,13 +205,13 @@ namespace MagiCave.Systems
                 writer.WriteStartElement("DungeonMapLevel", i.ToString());
                 serializer.Serialize(writer, Levels[i]);
 
-                writer.WriteStartElement("Rooms");
-                writer.WriteElementString("Amount", Rooms[i].Length.ToString());
-                foreach (Rectangle r in Rooms[i])
-                {
-                    ReckSerializer.Serialize(writer, r);
-                }
-                writer.WriteEndElement();
+                //writer.WriteStartElement("Rooms");
+                //writer.WriteElementString("Amount", Rooms[i].Length.ToString());
+                //foreach (Rectangle r in Rooms[i])
+                //{
+                //    ReckSerializer.Serialize(writer, r);
+                //}
+                //writer.WriteEndElement();
 
                 writer.WriteStartElement("Doors");
                 writer.WriteElementString("Amount", Doors[i].Length.ToString());

@@ -424,7 +424,7 @@ namespace MagiCave
                         levelmap.SetCellProperties(l, j, levelmap.GetCell(l, j).IsTransparent, levelmap.GetCell(l, j).IsWalkable, true);
                     }
                 }
-                levelmap.Rooms = game.Rooms[i].ToList();
+                //levelmap.Rooms = game.Rooms[i].ToList();
                 levelmap.Monsters = game.MonstersOnLevel[i].ToList();
                 foreach (Monster m in levelmap.Monsters)
                 {
@@ -477,16 +477,13 @@ namespace MagiCave
                 CurrentSchedulingSystem = null;
                 DungeonMap = null;
                 SchedulingSystem = new SchedulingSystem();
-                for (int i = 0; i < 9; i++)
-                {
-                    MessageLog.Add("");
-                }
+                MessageLog.Clear();
             }
         }
         public static void StartNewGame()
         {
             Check();
-            rootConsole.Title = "Magicave - Level 1";
+            rootConsole.Title = "MagiCave - Level 1";
             mapLevel = 1;
             time.Restart();
             seed = (int)DateTime.UtcNow.Ticks;
@@ -740,7 +737,7 @@ namespace MagiCave
                     }
                     else if (keyPress.Key == RLKey.Escape)
                     {
-                        rootConsole.Title = "Magicave";
+                        rootConsole.Title = "MagiCave";
                         menuConsole.Clear();
                         for (int i = 0; i < 4; i++)
                         {
@@ -795,8 +792,8 @@ namespace MagiCave
                                 DungeonMap.SetIsWalkable(Player.X, Player.Y, true);
                                 DungeonMap = CurrentLevel.Next.Value;
 
-                                Player.X = DungeonMap.Rooms[0].Center.X - 1;
-                                Player.Y = DungeonMap.Rooms[0].Center.Y;
+                                Player.X = DungeonMap.Rooms.First()[DungeonMap.Rooms.First().Count / 2].X;
+                                Player.Y = DungeonMap.Rooms.First()[DungeonMap.Rooms.First().Count / 2].Y;
 
                                 SchedulingSystem = CurrentSchedulingSystem.Next.Value;
                                 CurrentSchedulingSystem = CurrentSchedulingSystem.Next;
@@ -808,7 +805,7 @@ namespace MagiCave
                             }
                         }
                         // Moving to the previous level
-                        if (DungeonMap.CanMoveUpToPreviousLevel())
+                        if (DungeonMap.CanMoveUpToPreviousLevel() && !didPlayerAct)
                         {
                             if (CurrentLevel.Previous != null)
                             {
@@ -817,9 +814,9 @@ namespace MagiCave
 
                                 SchedulingSystem = CurrentSchedulingSystem.Previous.Value;
                                 CurrentSchedulingSystem = CurrentSchedulingSystem.Previous;
-
-                                Player.X = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.X - 1;
-                                Player.Y = DungeonMap.Rooms[DungeonMap.Rooms.Count - 1].Center.Y;
+                                
+                                Player.X = DungeonMap.Rooms.Last()[DungeonMap.Rooms.Last().Count / 2].X;
+                                Player.Y = DungeonMap.Rooms.Last()[DungeonMap.Rooms.Last().Count / 2].Y;
 
                                 rootConsole.Title = $"MagiCave - Level {--mapLevel}";
                                 didPlayerAct = true;

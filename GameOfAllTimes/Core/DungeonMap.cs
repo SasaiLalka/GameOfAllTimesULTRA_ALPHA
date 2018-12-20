@@ -15,10 +15,11 @@ namespace MagiCave.Core
         public Stairs StairsUp { get; set; }
         public Stairs StairsDown { get; set; }
 
-        public List<Rectangle> Rooms;
+        public List<List<ICell>> Rooms;
+
         public DungeonMap()
         {
-            Rooms = new List<Rectangle>();
+            Rooms = new List<List<ICell>>();
             Monsters = new List<Monster>();
             Doors = new List<Door>();
             Items = new List<IItem>();
@@ -156,33 +157,17 @@ namespace MagiCave.Core
             Game.SchedulingSystem.Add(monster);
         }
 
-        public Point GetRandomWalkableLocationInRoom (Rectangle room)
+        public Point GetRandomWalkableLocationInRoom (List<ICell> cave)
         {
             for (int i = 0; i < 100; i++)
             {
-                int x = Game.Random.Next(1, room.Width - 2) + room.X;
-                int y = Game.Random.Next(1, room.Height - 2) + room.Y;
-                if (IsWalkable(x, y))
+                ICell c = cave[Game.Random.Next(1, cave.Count - 1)];
+                if (c.IsWalkable)
                 {
-                    return new Point(x, y);
+                    return new Point(c.X, c.Y);
                 }
             }
-            return new Point(1 + room.X, 1 + room.Y);
-        }
-
-        public bool DoesRoomHaveWalkableSpace(Rectangle room)
-        {
-            for (int x = 1; x <= room.Width - 2; x++)
-            {
-                for (int y = 1; y <= room.Height - 2; y++)
-                {
-                    if (IsWalkable(x, y))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return new Point(1 + cave[0].X, 1 + cave[0].Y);
         }
 
         private void GetFieldOfView()
